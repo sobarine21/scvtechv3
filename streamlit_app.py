@@ -62,7 +62,7 @@ def extract_meta_tags(soup):
     return meta_info
 
 def extract_links(url, soup):
-    internal_links, external_links = [], []
+    internal_links, external links = [], []
     for link in soup.find_all("a", href=True):
         if link["href"].startswith("http"):
             if url in link["href"]:
@@ -146,9 +146,9 @@ def extract_headings(soup):
 
 def extract_social_media_links(external_links):
     social_links = []
-    social_media_domains = ["facebook", "twitter", "instagram", "linkedin", "youtube"]
-    for link in external_links:
-        if any(domain in link for domain in social_media_domains):
+    social_media domains = ["facebook", "twitter", "instagram", "linkedin", "youtube"]
+    for link in external links:
+        if any domain in link for domain in social_media domains):
             social_links.append(link)
     return social_links
 
@@ -309,9 +309,9 @@ def scrape_website(url):
     content = " ".join([p.get_text() for p in soup.find_all("p")])
     data["Main Content"] = content[:1000] + "..."
     data["Detected Language"] = detect_language(content)
-    internal_links, external_links = extract_links(url, soup)
-    data["Internal Links"] = internal_links
-    data["External Links"] = external_links
+    internal links, external links = extract_links(url, soup)
+    data["Internal Links"] = internal links
+    data["External Links"] = external links
     data["JSON-LD Data"] = extract_json_ld(soup)
     data["Forms"] = extract_forms(soup)
     data["Tracking Scripts"] = extract_scripts_and_tracking(soup)
@@ -320,7 +320,7 @@ def scrape_website(url):
     data["HTTP Info"] = extract_http_info(url)
     data["Tables"] = extract_tables(soup)
     data["Headings"] = extract_headings(soup)
-    data["Social Media Links"] = extract_social_media_links(external_links)
+    data["Social Media Links"] = extract_social_media_links(external links)
     data["Audio Files"] = extract_audio_files(soup)
     data["Stylesheets"] = extract_stylesheets(soup)
     data["iFrames"] = extract_iframes(soup)
