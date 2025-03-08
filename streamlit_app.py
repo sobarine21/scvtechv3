@@ -14,6 +14,7 @@ import io
 from concurrent.futures import ThreadPoolExecutor
 from textblob import TextBlob
 import time
+import plotly.express as px
 
 from langdetect import DetectorFactory
 DetectorFactory.seed = 0
@@ -486,6 +487,22 @@ if st.button("Analyze"):
                     file_name='comparison_data.xlsx',
                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 )
+                
+                # New section for visualizing the scoring metrics
+                st.header("Scoring Dashboard")
+                
+                score_data = {url: data["Score"] for url, data in scraped_data.items()}
+                max_score = list(scraped_data.values())[0]["Max Score"]
+                
+                score_df = pd.DataFrame(list(score_data.items()), columns=['URL', 'Score'])
+                score_df['Max Score'] = max_score
+                
+                fig = px.bar(score_df, x='URL', y='Score', title='Website Scores', range_y=[0, max_score])
+                st.plotly_chart(fig)
+                
+                detailed_scores = {url: data for url, data in scraped_data.items()}
+                detailed_score_df = pd.DataFrame(detailed_scores).T.reset_index()
+                st.dataframe(detailed_score_df)
 
 st.markdown(
     """
