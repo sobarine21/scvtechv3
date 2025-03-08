@@ -19,6 +19,8 @@ import plotly.express as px
 from langdetect import DetectorFactory
 DetectorFactory.seed = 0
 
+# The imports should be added manually as per the instructions.
+
 def get_random_user_agent():
     user_agents = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36',
@@ -32,7 +34,6 @@ def get_random_user_agent():
 
 def is_valid_url(url):
     return validators.url(url)
-
 def is_scraping_allowed(url):
     parsed_url = urlparse(url)
     robots_url = f"{parsed_url.scheme}://{parsed_url.netloc}/robots.txt"
@@ -62,7 +63,7 @@ def extract_meta_tags(soup):
     return meta_info
 
 def extract_links(url, soup):
-    internal_links, external links = [], []
+    internal_links, external_links = [], []
     for link in soup.find_all("a", href=True):
         if link["href"].startswith("http"):
             if url in link["href"]:
@@ -146,9 +147,9 @@ def extract_headings(soup):
 
 def extract_social_media_links(external_links):
     social_links = []
-    social_media domains = ["facebook", "twitter", "instagram", "linkedin", "youtube"]
-    for link in external links:
-        if any domain in link for domain in social_media domains:
+    social_media_domains = ["facebook", "twitter", "instagram", "linkedin", "youtube"]
+    for link in external_links:
+        if any(domain in link for domain in social_media_domains):
             social_links.append(link)
     return social_links
 
@@ -309,9 +310,9 @@ def scrape_website(url):
     content = " ".join([p.get_text() for p in soup.find_all("p")])
     data["Main Content"] = content[:1000] + "..."
     data["Detected Language"] = detect_language(content)
-    internal links, external links = extract_links(url, soup)
-    data["Internal Links"] = internal links
-    data["External Links"] = external links
+    internal_links, external_links = extract_links(url, soup)
+    data["Internal Links"] = internal_links
+    data["External Links"] = external_links
     data["JSON-LD Data"] = extract_json_ld(soup)
     data["Forms"] = extract_forms(soup)
     data["Tracking Scripts"] = extract_scripts_and_tracking(soup)
@@ -320,7 +321,7 @@ def scrape_website(url):
     data["HTTP Info"] = extract_http_info(url)
     data["Tables"] = extract_tables(soup)
     data["Headings"] = extract_headings(soup)
-    data["Social Media Links"] = extract_social_media_links(external links)
+    data["Social Media Links"] = extract_social_media_links(external_links)
     data["Audio Files"] = extract_audio_files(soup)
     data["Stylesheets"] = extract_stylesheets(soup)
     data["iFrames"] = extract_iframes(soup)
@@ -500,14 +501,23 @@ if st.button("Analyze"):
                 fig = px.bar(score_df, x='URL', y='Score', title='Website Scores', range_y=[0, max_score])
                 st.plotly_chart(fig)
                 
-                detailed_scores = {url: data for url, data in scraped_data.items()}
-                detailed_score_df = pd.DataFrame(detailed_scores).T.reset_index()
+                # Detailed scoring for each metric
+                detailed_scores = []
+                for url, data in scraped_data.items():
+                    metrics = {
+                        "URL": url,
+                        "Meta Tags": 10 if data.get("Meta Tags") else 0,
+                        "Detected Language": 10 if data.get("Detected Language") != "Detection failed" else 0,
+                        "Internal Links": 10 if data.get("Internal Links") else 0,
+                        "External Links": 10 if data.get("External Links") else 0,
+                        "Forms": 10 if data.get("Forms") else 0,
+                        "Media": 10 if data.get("Media") else 0,
+                        "Tables": 10 if data.get("Tables") else 0,
+                        "Headings": 10 if data.get("Headings") else 0,
+                        "Social Media Links": 10 if data.get("Social Media Links") else 0,
+                        "HTTP Info": 10 if data.get("HTTP Info") and data["HTTP Info"].get("status_code") == 200 else 0
+                    }
+                    detailed_scores.append(metrics)
+                
+                detailed_score_df = pd.DataFrame(detailed_scores)
                 st.dataframe(detailed_score_df)
-
-st.markdown(
-    """
-    ### Self-Hosting
-    If you want to self-host this application or download the source code, please visit:  
-    👉 [Download Source Code](https://dhruvbansal8.gumroad.com/l/hhwbm)
-    """
-)
