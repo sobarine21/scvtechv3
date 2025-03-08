@@ -489,7 +489,7 @@ if st.button("Analyze"):
                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 )
                 
-                               # New section for visualizing the scoring metrics
+                              # New section for visualizing the scoring metrics
                 st.header("Scoring Dashboard")
                 
                 score_data = {url: data["Score"] for url, data in scraped_data.items()}
@@ -539,5 +539,6 @@ if st.button("Analyze"):
                     if metric in ["Page Load Time", "Sentiment Polarity", "Sentiment Subjectivity"]:
                         fig = px.bar(metric_df, x='URL', y=metric, title=f'{metric} Metrics')
                     else:
-                        fig = px.bar(metric_df, x='URL', y=metric.astype(str), title=f'{metric} Metrics')
+                        metric_df[metric] = metric_df[metric].apply(lambda x: len(x) if isinstance(x, list) else 1 if x else 0)
+                        fig = px.bar(metric_df, x='URL', y=metric, title=f'{metric} Metrics')
                     st.plotly_chart(fig)
