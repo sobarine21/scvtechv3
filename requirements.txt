@@ -1,1 +1,16 @@
 streamlit
+requests
+beautifulsoup4
+textblob
+matplotlib
+wordcloud
+langdetect
+validators
+Readability
+pandas 
+textstat
+lxml
+lxml_html_clean
+requests_html
+xlsxwriter
+plotly
