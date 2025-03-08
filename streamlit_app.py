@@ -148,7 +148,7 @@ def extract_social_media_links(external_links):
     social_links = []
     social_media domains = ["facebook", "twitter", "instagram", "linkedin", "youtube"]
     for link in external links:
-        if any domain in link for domain in social_media domains):
+        if any domain in link for domain in social_media domains:
             social_links.append(link)
     return social_links
 
