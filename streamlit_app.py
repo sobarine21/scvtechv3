@@ -489,7 +489,7 @@ if st.button("Analyze"):
                     mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                 )
                 
-                # New section for visualizing the scoring metrics
+                                # New section for visualizing the scoring metrics
                 st.header("Scoring Dashboard")
                 
                 score_data = {url: data["Score"] for url, data in scraped_data.items()}
@@ -525,9 +525,15 @@ if st.button("Analyze"):
                 # Additional dashboards for each metric
                 st.header("Detailed Metrics Dashboard")
                 
-                for metric in ["Meta Tags", "Detected Language", "Internal Links", "External Links", "Forms", "Media", "Tables", "Headings", "Social Media Links", "HTTP Info"]:
+                metric_list = [
+                    "Meta Tags", "Detected Language", "Internal Links", 
+                    "External Links", "Forms", "Media", "Tables", 
+                    "Headings", "Social Media Links", "HTTP Info"
+                ]
+                
+                for metric in metric_list:
                     st.subheader(f"{metric} Dashboard")
-                    metric_data = {url: data.get(metric) for url, data in scraped_data.items()}
+                    metric_data = {url: (1 if data.get(metric) else 0) for url, data in scraped_data.items()}
                     metric_df = pd.DataFrame(list(metric_data.items()), columns=['URL', metric])
                     fig = px.bar(metric_df, x='URL', y=metric, title=f'{metric} Metrics')
                     st.plotly_chart(fig)
